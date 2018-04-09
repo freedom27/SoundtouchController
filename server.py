@@ -1,8 +1,9 @@
 from flask import Flask, request
 from libsoundtouch import soundtouch_device
 from auth import requires_auth
+from config import config
 
-soundtouch = soundtouch_device('192.168.1.28')
+soundtouch = soundtouch_device(config['soundtouch']['ip'])
 app = Flask(__name__)
 
 @app.route('/')
