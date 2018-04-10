@@ -6,19 +6,22 @@ from config import config
 soundtouch = soundtouch_device(config['soundtouch']['ip'])
 app = Flask(__name__)
 
-@app.route('/')
+BASE_SOUNDTOUCH_URL = '/soundtouch'
+SUCCESS_RESPONSE_JSON = '{"result": "success"}'
+
+@app.route(BASE_SOUNDTOUCH_URL)
 def index():
     return 'Welcome to the Soundtouch Control System'
     
-@app.route('/volume', methods=['POST'])
+@app.route(BASE_SOUNDTOUCH_URL+'/volume', methods=['POST'])
 @requires_auth
 def set_volume():
     req_data = request.get_json()
     volume = req_data['volume']
     soundtouch.set_volume(volume)
-    return '{"result": "success"}'
+    return SUCCESS_RESPONSE_JSON
     
-@app.route('/source', methods=['POST'])
+@app.route(BASE_SOUNDTOUCH_URL+'/source', methods=['POST'])
 @requires_auth
 def set_source():
     req_data = request.get_json()
@@ -27,9 +30,9 @@ def set_source():
         soundtouch.select_source_tv()
     elif source == 'bluetooth':
         soundtouch.select_source_bluetooth()
-    return '{"result": "success"}'
+    return SUCCESS_RESPONSE_JSON
     
-@app.route('/mute', methods=['POST'])
+@app.route(BASE_SOUNDTOUCH_URL+'/mute', methods=['POST'])
 @requires_auth
 def set_mute():
     req_data = request.get_json()
@@ -37,8 +40,7 @@ def set_mute():
     volume = soundtouch.volume()
     if bool(volume.muted) != bool(mute):
         soundtouch.mute()
-
-    return '{"result": "success"}'
+    return SUCCESS_RESPONSE_JSON
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
